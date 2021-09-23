@@ -1,0 +1,10 @@
+[[main]]
+  name = "关于"
+  identifier = "about"
+  pre = '<i class="fa fa-fw fa-user"></i>'
+
+[[main]]
+  parent = "about"
+  name = "Github"
+  url = "https://github.com/loongarch64/"
+  pre = '<i class="fab fa-fw fa-github"></i>'

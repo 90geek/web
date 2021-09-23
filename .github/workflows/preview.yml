@@ -1,0 +1,46 @@
+name: website-preview
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.79.1'
+          # extended: true
+
+      - name: Build
+        run: hugo --minify --environment preview --cleanDestinationDir
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: loongarch64/website-preview
+          allow_empty_commit: true
+          publish_dir: ./public
+          cname: preview.loongarch.dev
+          #force_orphan: true
+
+      - name: Update status
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'website-preview / deploy (update)'
+          description: 'Deployed, click "Details" to view ->'
+          state: 'success'
+          target_url: https://preview.loongarch.dev
+          sha: ${{github.event.pull_request.head.sha || github.sha}}
+
